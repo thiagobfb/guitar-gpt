@@ -104,7 +104,6 @@ The system follows a **hexagonal architecture (ports & adapters)** and an **even
 
 A simplified view of the main interactions:
 
-```mermaid
 flowchart LR
     User[User / Frontend] --> API[REST API (Spring Web)]
     API --> UC[Application Layer<br/>Use Cases]
@@ -230,7 +229,6 @@ O sistema segue uma **arquitetura hexagonal (ports & adapters)** e um estilo **o
 
 Uma visão simplificada das principais interações:
 
-```mermaid
 flowchart LR
     User[Usuário / Frontend] --> API[REST API (Spring Web)]
     API --> UC[Camada de Aplicação<br/>Use Cases]
