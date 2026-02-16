@@ -1,0 +1,27 @@
+name: Feature Request
+description: Solicitar uma funcionalidade
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Descrição
+      description: O que precisa ser adicionado? Por quê?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios de aceitação
+      value: |
+        - [ ] 
+        - [ ] 
+  - type: textarea
+    id: risks
+    attributes:
+      label: Riscos/Dependências
+  - type: input
+    id: context
+    attributes:
+      label: Contexto adicional (links, PRDs, etc.)

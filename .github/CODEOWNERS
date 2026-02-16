@@ -1,0 +1,5 @@
+# Padrões de revisão
+# Ex.: revisores padrão para Java e CI
+*       @thiagobfb
+*.java  @thiagobfb
+.github/workflows/* @thiagobfb

@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    container_name: guitargpt-db
+    environment:
+      POSTGRES_DB: guitargpt
+      POSTGRES_USER: guitargpt
+      POSTGRES_PASSWORD: guitargpt
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U guitargpt -d guitargpt"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.3.15
+    container_name: guitargpt-redpanda
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --smp=1
+      - --memory=1G
+      - --reserve-memory=0M
+      - --node-id=0
+      - --check=false
+    ports:
+      - "9092:9092"      # Kafka API
+      - "9644:9644"      # Admin API
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "info", "-X", "brokers=localhost:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: guitargpt-app
+    depends_on:
+      db:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/guitargpt
+      SPRING_DATASOURCE_USERNAME: guitargpt
+      SPRING_DATASOURCE_PASSWORD: guitargpt
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    # Opcional: montar código fonte para hot-reload (se usar devtools)
+    # volumes:
+    #   - .:/workspace
+
+volumes:
+  db_data:

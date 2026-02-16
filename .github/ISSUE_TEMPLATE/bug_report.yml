@@ -1,0 +1,39 @@
+name: Bug Report
+description: Reportar um problema no GuitarGPT
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto
+      description: O que você estava tentando fazer?
+      placeholder: Descreva o contexto...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      value: |
+        1. 
+        2. 
+        3. 
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamento atual
+  - type: input
+    id: version
+    attributes:
+      label: Versão/commit
+      placeholder: ex.: v0.1.0 / abcdef123
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs/stacktrace relevantes
+      render: shell

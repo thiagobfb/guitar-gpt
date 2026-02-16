@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(java:*)",
+      "Bash(mvn clean compile:*)",
+      "Bash(mvn verify:*)",
+      "Bash(./mvnw clean verify:*)",
+      "WebSearch"
+    ]
+  }
+}
