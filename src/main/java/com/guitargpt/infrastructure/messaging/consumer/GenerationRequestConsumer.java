@@ -55,16 +55,15 @@ public class GenerationRequestConsumer {
     }
 
     private String generateMockTablature(String userPrompt) {
-        return """
-                GuitarGPT — Generated Tablature
-                Prompt: %s
-
-                e|---0---1---0---3---1---0---------|
-                B|---1---1---1---0---1---1---------|
-                G|---0---2---0---0---2---0---------|
-                D|---2---3---2---0---3---2---------|
-                A|---3---3---3---2---3---3---------|
-                E|---x---1---x---3---1---x---------|
-                """.formatted(userPrompt);
+        StringBuilder sb = new StringBuilder();
+        sb.append("GuitarGPT Generated Tablature\n");
+        sb.append("Prompt: ").append(userPrompt).append("\n\n");
+        sb.append("e|---0---1---0---3---1---0---------|\n");
+        sb.append("B|---1---1---1---0---1---1---------|\n");
+        sb.append("G|---0---2---0---0---2---0---------|\n");
+        sb.append("D|---2---3---2---0---3---2---------|\n");
+        sb.append("A|---3---3---3---2---3---3---------|\n");
+        sb.append("E|---x---1---x---3---1---x---------|");
+        return sb.toString();
     }
 }

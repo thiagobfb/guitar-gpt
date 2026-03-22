@@ -1,7 +1,10 @@
 package com.guitargpt.infrastructure.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +17,13 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("GuitarGPT API")
                         .version("0.1.0")
-                        .description("REST API for GuitarGPT — an AI-powered guitar tablature and music generation platform."));
+                        .description("REST API for GuitarGPT - an AI-powered guitar tablature and music generation platform."))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .components(new Components()
+                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .description("JWT token from AWS Cognito")));
     }
 }
