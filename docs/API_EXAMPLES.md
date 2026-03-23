@@ -55,9 +55,9 @@ curl -X DELETE http://localhost:8080/api/v1/users/{userId}
 
 ## 2. Musical Projects
 
-### Create Musical Project
+### Create Musical Project (Nested under User)
 ```bash
-curl -X POST http://localhost:8080/api/v1/projects \
+curl -X POST http://localhost:8080/api/v1/users/{userId}/projects \
   -H "Content-Type: application/json" \
   -d '{
     "name": "My First Songwriting",
@@ -83,19 +83,19 @@ curl -X POST http://localhost:8080/api/v1/projects \
 }
 ```
 
-### Get All Projects
+### Get All Projects for User
 ```bash
-curl -X GET http://localhost:8080/api/v1/projects
+curl -X GET http://localhost:8080/api/v1/users/{userId}/projects
 ```
 
 ### Get Project by ID
 ```bash
-curl -X GET http://localhost:8080/api/v1/projects/{projectId}
+curl -X GET http://localhost:8080/api/v1/users/{userId}/projects/{projectId}
 ```
 
 ### Update Project
 ```bash
-curl -X PUT http://localhost:8080/api/v1/projects/{projectId} \
+curl -X PUT http://localhost:8080/api/v1/users/{userId}/projects/{projectId} \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Smooth Jazz Fusion (Updated)",
@@ -105,7 +105,7 @@ curl -X PUT http://localhost:8080/api/v1/projects/{projectId} \
 
 ### Delete Project
 ```bash
-curl -X DELETE http://localhost:8080/api/v1/projects/{projectId}
+curl -X DELETE http://localhost:8080/api/v1/users/{userId}/projects/{projectId}
 ```
 
 ---
