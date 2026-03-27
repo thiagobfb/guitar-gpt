@@ -10,5 +10,6 @@ Este diretório registra decisões arquiteturais relevantes do projeto.
 | 004 | Adoção do Lombok para Redução de Boilerplate | Aprovado | 2026-02-13 |
 | 005 | Documentação da API: SpringDoc OpenAPI | Aprovado | 2026-02-13 |
 | 006 | Autenticação/IAM: AWS Cognito vs. Keycloak | Aprovado | 2026-02-13 |
+| 007 | Estratégia de Identificadores: UUID vs. ID Numérico | Aprovado | 2026-03-27 |
 
 > Status possíveis: Proposto, Aprovado, Substituído.
