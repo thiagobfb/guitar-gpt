@@ -1,41 +1,41 @@
 ---
 name: clean-ddd-hexagonal
-description: Guia de Clean Architecture + DDD + Hexagonal adaptado ao GuitarGPT. Ative em mudanças de domínio, ports, adapters, ou estrutura de camadas. Referência conceitual para decisões de arquitetura.
+description: Clean Architecture + DDD + Hexagonal guide adapted to GuitarGPT. Trigger on domain changes, ports, adapters, or layer structure decisions. Conceptual reference for architecture decisions.
 ---
 
 # Clean Architecture + DDD + Hexagonal — GuitarGPT
 
-Referência conceitual para arquitetura do projeto. Os princípios são universais; a **implementação** segue as convenções já estabelecidas no GuitarGPT (ver CLAUDE.md).
+Conceptual reference for project architecture. Principles are universal; the **implementation** follows conventions already established in GuitarGPT (see CLAUDE.md).
 
-## Quando Usar (e Quando NÃO)
+## When to Use (and When NOT to)
 
-| Usar | Não usar |
-|------|----------|
-| Mudança de regra de negócio ou invariante | CRUD simples sem lógica |
-| Novo aggregate ou entidade com comportamento | Correção de bug pontual |
-| Decisão sobre onde colocar código (camada) | Ajustes de configuração/infra |
-| Revisão de acoplamento entre camadas | Mudanças cosméticas em DTOs |
+| Use | Skip |
+|-----|------|
+| Business rule or invariant change | Simple CRUD with no logic |
+| New aggregate or entity with behavior | Punctual bug fix |
+| Deciding where code belongs (which layer) | Configuration/infra adjustments |
+| Reviewing coupling between layers | Cosmetic DTO changes |
 
-> **Princípio**: Comece simples. Evolua complexidade só quando necessário. O GuitarGPT V1 prioriza entrega sobre pureza arquitetural.
+> **Principle**: Start simple. Evolve complexity only when needed. GuitarGPT V1 prioritizes delivery over architectural purity.
 
-## REGRA CRÍTICA: Dependências apontam para dentro
+## CRITICAL: The Dependency Rule
 
 ```
 Infrastructure → Application → Domain
   (adapters)     (services)     (core)
 ```
 
-**Violações a detectar:**
-- Domain importando Spring, JPA, Kafka
-- Controllers chamando repositórios diretamente (pulando services)
-- Entidades JPA usadas como domain models (o GuitarGPT usa mappers para separar)
+**Violations to catch:**
+- Domain importing Spring, JPA, or Kafka
+- Controllers calling repositories directly (bypassing services)
+- JPA entities used as domain models (GuitarGPT uses mappers to separate them)
 
-## Estrutura do GuitarGPT (real)
+## GuitarGPT Project Structure (actual)
 
 ```
 src/main/java/com/guitargpt/
-├── domain/                          # Core: zero dependências Spring
-│   ├── model/                       # POJOs com Lombok (@Getter @Setter @NoArgsConstructor @AllArgsConstructor)
+├── domain/                          # Core: zero Spring dependencies
+│   ├── model/                       # POJOs with Lombok (@Getter @Setter @NoArgsConstructor @AllArgsConstructor)
 │   │   ├── User.java
 │   │   ├── MusicalProject.java
 │   │   ├── Track.java
@@ -63,7 +63,7 @@ src/main/java/com/guitargpt/
 │       ├── BusinessRuleException.java
 │       └── ResourceNotFoundException.java
 │
-├── application/                     # Orquestração: @Service @Transactional
+├── application/                     # Orchestration: @Service @Transactional
 │   └── service/
 │       ├── UserService.java         # implements UserUseCase
 │       ├── MusicalProjectService.java
@@ -71,7 +71,7 @@ src/main/java/com/guitargpt/
 │       ├── PromptTemplateService.java
 │       └── GenerationRequestService.java
 │
-└── infrastructure/                  # Adapters: tudo que é framework
+└── infrastructure/                  # Adapters: all framework code
     ├── web/
     │   ├── controller/              # DRIVER ADAPTERS (REST)
     │   │   ├── UserController.java
@@ -80,11 +80,11 @@ src/main/java/com/guitargpt/
     │   │   ├── PromptTemplateController.java
     │   │   └── GenerationRequestController.java
     │   └── dto/
-    │       ├── request/             # Java records com Jakarta validation
+    │       ├── request/             # Java records with Jakarta validation
     │       └── response/            # Java records
     ├── persistence/
-    │   ├── entity/                  # JPA entities (NÃO são domain models)
-    │   ├── mapper/                  # Domain ↔ JPA entity (bidirectional)
+    │   ├── entity/                  # JPA entities (NOT domain models)
+    │   ├── mapper/                  # Domain <-> JPA entity (bidirectional)
     │   ├── adapter/                 # DRIVEN ADAPTERS (implements domain ports)
     │   └── repository/              # Spring Data JPA interfaces
     ├── messaging/                   # Kafka adapter (DRIVEN)
@@ -93,28 +93,28 @@ src/main/java/com/guitargpt/
     └── config/                      # Spring configs (Security, OpenAPI, etc.)
 ```
 
-### Mapeamento Conceitual → GuitarGPT
+### Concept-to-Implementation Mapping
 
-| Conceito DDD/Hexagonal | Implementação no GuitarGPT |
+| DDD / Hexagonal Concept | GuitarGPT Implementation |
 |---|---|
-| **Aggregate Root** | Domain model (ex: `MusicalProject`) |
-| **Entity** | Domain model com identity UUID |
-| **Value Object** | Enums (`TrackType`, `PromptTemplateCategory`) — VOs ricos não usados na V1 |
+| **Aggregate Root** | Domain model (e.g. `MusicalProject`) |
+| **Entity** | Domain model with UUID identity |
+| **Value Object** | Enums (`TrackType`, `PromptTemplateCategory`) — rich VOs not used in V1 |
 | **Driver Port** | `domain/port/in/XxxUseCase.java` |
 | **Driven Port** | `domain/port/out/XxxRepository.java` |
 | **Driver Adapter** | `infrastructure/web/controller/XxxController.java` |
 | **Driven Adapter** | `infrastructure/persistence/adapter/XxxRepositoryAdapter.java` |
 | **Application Service** | `application/service/XxxService.java` (@Service @Transactional) |
-| **Domain Event** | `GenerationRequestEvent` (publicado no Kafka) |
-| **Repository** | Interface no domain, implementação no infrastructure |
-| **DTO** | Java records em `infrastructure/web/dto/` |
-| **Mapper** | Bidirectional em `infrastructure/persistence/mapper/` |
+| **Domain Event** | `GenerationRequestEvent` (published to Kafka) |
+| **Repository** | Interface in domain, implementation in infrastructure |
+| **DTO** | Java records in `infrastructure/web/dto/` |
+| **Mapper** | Bidirectional in `infrastructure/persistence/mapper/` |
 
-## Decisões Arquiteturais Específicas do GuitarGPT
+## GuitarGPT-Specific Architectural Decisions
 
-### 1. Domain models são POJOs, não Rich Domain Models
+### 1. Domain models are POJOs, not Rich Domain Models
 ```java
-// GuitarGPT usa Lombok POJOs (anemic por escolha na V1)
+// GuitarGPT uses Lombok POJOs (anemic by V1 choice)
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Track {
     private UUID id;
@@ -124,28 +124,28 @@ public class Track {
     private String description;
 }
 ```
-**Por quê**: V1 prioriza entrega. Comportamento vive nos services. Migrar para Rich Domain quando complexidade justificar.
+**Why**: V1 prioritizes delivery. Behavior lives in services. Migrate to Rich Domain Models when complexity justifies it.
 
-### 2. Sem camada Presentation separada
-Controllers ficam em `infrastructure/web/` (não em `presentation/`). Motivo: Spring Boot trata controllers como adapters de infraestrutura, e o projeto é API-only (sem UI server-side).
+### 2. No separate Presentation layer
+Controllers live in `infrastructure/web/` (not in a separate `presentation/`). Reason: Spring Boot treats controllers as infrastructure adapters, and the project is API-only (no server-side UI).
 
-### 3. FKs como UUID, sem @ManyToOne
+### 3. FKs as UUID columns, no @ManyToOne
 ```java
-// JPA entity armazena FK como UUID column
-private UUID projectId;  // NÃO @ManyToOne(Project.class)
+// JPA entity stores FK as UUID column
+private UUID projectId;  // NOT @ManyToOne(Project.class)
 ```
-**Por quê**: Evita lazy loading surpresa, simplifica testes, e permite referência cross-aggregate por ID (padrão DDD).
+**Why**: Avoids surprise lazy loading, simplifies tests, and allows cross-aggregate reference by ID (DDD pattern).
 
-### 4. ID gerado na aplicação (UUID.randomUUID())
+### 4. ID generated in application layer (UUID.randomUUID())
 ```java
-// No service, ANTES do save
+// In service, BEFORE save
 request.setId(UUID.randomUUID());
 repository.save(request);
 eventPublisher.publish(new GenerationRequestEvent(request.getId()));
 ```
-**Por quê**: ADR-007. Permite publicar evento Kafka com ID antes de persistir. Sem dependência de sequence do DB.
+**Why**: ADR-007. Allows publishing Kafka event with ID before persisting. No DB sequence dependency.
 
-### 5. Enums no domain, String no JPA
+### 5. Enums in domain, String in JPA
 ```java
 // Domain: Java enum
 private TrackType type;
@@ -153,33 +153,33 @@ private TrackType type;
 // JPA entity: String column
 private String type;
 
-// Mapper: valueOf() ↔ .name()
+// Mapper: valueOf() <-> .name()
 domain.setType(TrackType.valueOf(entity.getType()));
 entity.setType(domain.getType().name());
 ```
 
-## Anti-Patterns a Evitar no GuitarGPT
+## Anti-Patterns to Avoid
 
-| Anti-Pattern | Problema | Como Detectar |
+| Anti-Pattern | Problem | How to Detect |
 |---|---|---|
-| **Controller → Repository direto** | Pula use case, acopla HTTP ao banco | Controller importando `XxxRepository` |
-| **Domain importando Spring** | Core depende de framework | `import org.springframework` em `domain/` |
-| **JPA entity como domain model** | Acoplamento Hibernate no domínio | `@Entity` em `domain/model/` |
-| **DTO na camada de serviço** | Application depende de infraestrutura | Service recebendo `CreateXxxRequest` |
-| **Lógica de negócio no controller** | Controller faz mais que traduzir HTTP | if/else com regras de negócio no controller |
-| **Cross-aggregate transaction** | Duas entidades raiz na mesma TX | Service salvando Project + Track no mesmo método sem evento |
+| **Controller -> Repository directly** | Bypasses use case, couples HTTP to DB | Controller importing `XxxRepository` |
+| **Domain importing Spring** | Core depends on framework | `import org.springframework` in `domain/` |
+| **JPA entity as domain model** | Hibernate coupling in domain | `@Entity` in `domain/model/` |
+| **DTO in service layer** | Application depends on infrastructure | Service receiving `CreateXxxRequest` |
+| **Business logic in controller** | Controller does more than translate HTTP | if/else with business rules in controller |
+| **Cross-aggregate transaction** | Two aggregate roots in same TX | Service saving Project + Track in same method without event |
 
-## Testes por Camada
+## Testing by Layer
 
-| Camada | Tipo | Framework | Padrão |
+| Layer | Type | Framework | Pattern |
 |---|---|---|---|
-| **Domain** | Unit | JUnit + AssertJ | Sem mocks (domínio é puro) |
+| **Domain** | Unit | JUnit + AssertJ | No mocks needed (domain is pure) |
 | **Application (Service)** | Unit | `@ExtendWith(MockitoExtension.class)` | `@Mock` repositories, `@InjectMocks` service |
-| **Infrastructure (Controller)** | Slice | `@WebMvcTest` + `@MockitoBean` | MockMvc para HTTP assertions |
-| **Infrastructure (Repository)** | Integration | Testcontainers (quando necessário) | H2 in-memory para testes rápidos |
+| **Infrastructure (Controller)** | Slice | `@WebMvcTest` + `@MockitoBean` | MockMvc for HTTP assertions |
+| **Infrastructure (Repository)** | Integration | Testcontainers (when needed) | H2 in-memory for fast tests |
 
 ```java
-// Service test (padrão do projeto)
+// Service test (project pattern)
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
     @Mock private UserRepository userRepository;
@@ -187,11 +187,11 @@ class UserServiceTest {
 
     @Test
     void create_shouldSaveAndReturn() {
-        // Arrange, Act, Assert com AssertJ
+        // Arrange, Act, Assert with AssertJ
     }
 }
 
-// Controller test (padrão do projeto)
+// Controller test (project pattern)
 @WebMvcTest(UserController.class)
 @Import(TestSecurityConfig.class)
 class UserControllerTest {
@@ -200,43 +200,43 @@ class UserControllerTest {
 }
 ```
 
-## Checklist para Novas Entidades
+## New Entity Checklist
 
-> Checklist completo em CLAUDE.md: "Entity creation checklist"
+> Full checklist in CLAUDE.md: "Entity creation checklist"
 
-1. Domain model (`domain/model/`) → POJO com Lombok
-2. JPA entity (`infrastructure/persistence/entity/`) → Lombok + JPA annotations
-3. Mapper (`infrastructure/persistence/mapper/`) → bidirectional, null-safe para enums
-4. JPA repository (`infrastructure/persistence/repository/`) → Spring Data interface
-5. Repository adapter (`infrastructure/persistence/adapter/`) → implements domain port
-6. Port in (`domain/port/in/`) → use case interface
-7. Port out (`domain/port/out/`) → repository interface
-8. Service (`application/service/`) → @Service @Transactional, implements use case
-9. Controller (`infrastructure/web/controller/`) → REST, usa use case (não repository)
-10. DTOs (`infrastructure/web/dto/`) → Java records com Jakarta validation
-11. Flyway migration (`db/migration/`) → `V{n}__{description}.sql`
-12. Testes: Service test + Controller test
+1. Domain model (`domain/model/`) — POJO with Lombok
+2. JPA entity (`infrastructure/persistence/entity/`) — Lombok + JPA annotations
+3. Mapper (`infrastructure/persistence/mapper/`) — bidirectional, null-safe for enums
+4. JPA repository (`infrastructure/persistence/repository/`) — Spring Data interface
+5. Repository adapter (`infrastructure/persistence/adapter/`) — implements domain port
+6. Port in (`domain/port/in/`) — use case interface
+7. Port out (`domain/port/out/`) — repository interface
+8. Service (`application/service/`) — @Service @Transactional, implements use case
+9. Controller (`infrastructure/web/controller/`) — REST, uses use case (not repository)
+10. DTOs (`infrastructure/web/dto/`) — Java records with Jakarta validation
+11. Flyway migration (`db/migration/`) — `V{n}__{description}.sql`
+12. Tests: Service test + Controller test
 
-## Referências Conceituais
+## Reference Documentation
 
-Os arquivos em `references/` são **material de referência teórico** (language-agnostic). Para aplicação no GuitarGPT, sempre consulte este SKILL.md e o CLAUDE.md primeiro.
+Files in `references/` are **theoretical reference material** (language-agnostic). For GuitarGPT application, always consult this SKILL.md and CLAUDE.md first.
 
-| Arquivo | Uso |
-|---|---|
-| [references/LAYERS.md](references/LAYERS.md) | Teoria das camadas (adaptar para estrutura do projeto) |
-| [references/DDD-STRATEGIC.md](references/DDD-STRATEGIC.md) | Bounded contexts (futuro: quando escalar) |
-| [references/DDD-TACTICAL.md](references/DDD-TACTICAL.md) | Entities, Value Objects, Aggregates (teoria) |
-| [references/HEXAGONAL.md](references/HEXAGONAL.md) | Ports & Adapters (teoria) |
-| [references/CQRS-EVENTS.md](references/CQRS-EVENTS.md) | CQRS e eventos (futuro: quando complexidade justificar) |
-| [references/TESTING.md](references/TESTING.md) | Patterns de teste (adaptar para JUnit/Mockito) |
+| File | Purpose |
+|------|---------|
+| [references/LAYERS.md](references/LAYERS.md) | Layer theory (adapt to project structure) |
+| [references/DDD-STRATEGIC.md](references/DDD-STRATEGIC.md) | Bounded contexts (future: when scaling) |
+| [references/DDD-TACTICAL.md](references/DDD-TACTICAL.md) | Entities, Value Objects, Aggregates (theory) |
+| [references/HEXAGONAL.md](references/HEXAGONAL.md) | Ports & Adapters (theory) |
+| [references/CQRS-EVENTS.md](references/CQRS-EVENTS.md) | CQRS and events (future: when complexity justifies) |
+| [references/TESTING.md](references/TESTING.md) | Testing patterns (adapt to JUnit/Mockito) |
 | [references/CHEATSHEET.md](references/CHEATSHEET.md) | Quick reference |
 
-## Evolução Futura (quando justificar)
+## Future Evolution (when justified)
 
-| De (V1) | Para (V2+) | Trigger |
+| From (V1) | To (V2+) | Trigger |
 |---|---|---|
-| Anemic domain models | Rich domain models com comportamento | Lógica de negócio complexa nos services |
-| Primitivos (UUID, String) | Value Objects (`TrackId`, `ProjectName`) | Type safety necessária |
-| Flat `model/` | Organização por aggregate | > 10 entidades no domínio |
-| Sem CQRS | Command/Query separation | Read models diferentes dos write models |
-| Sem event sourcing | Event sourcing | Auditoria completa necessária |
+| Anemic domain models | Rich domain models with behavior | Complex business logic in services |
+| Primitives (UUID, String) | Value Objects (`TrackId`, `ProjectName`) | Type safety needed |
+| Flat `model/` | Organization by aggregate | > 10 entities in domain |
+| No CQRS | Command/Query separation | Read models differ from write models |
+| No event sourcing | Event sourcing | Full audit trail required |
