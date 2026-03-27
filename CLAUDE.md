@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Governança do Projeto
+
+Este projeto segue o framework **Co-Fundador Técnico** definido em [`.claude/cofundador-tecnico.md`](.claude/cofundador-tecnico.md). Use-o como referência para:
+- Fases do projeto (Descoberta → Planejamento → Construção → Polimento → Entrega)
+- Formato de decisões (Contexto → Opções → Trade-offs → Decisão → Próximos passos)
+- ADRs, NFRs, métricas de sucesso e definição de pronto (DoD)
+- Delegação para subagentes especializados (`.claude/agents/`)
+- Comunicação em português, linguagem clara, push back quando necessário
+
 ## Build & Test Commands
 
 ```bash
