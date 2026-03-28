@@ -3,8 +3,8 @@ package com.guitargpt.infrastructure.web.controller;
 import com.guitargpt.domain.model.GenerationRequest;
 import com.guitargpt.domain.model.GenerationRequestStatus;
 import com.guitargpt.domain.port.in.GenerationRequestUseCase;
-import com.guitargpt.infrastructure.web.dto.request.CreateGenerationRequestRequest;
-import com.guitargpt.infrastructure.web.dto.request.UpdateGenerationRequestRequest;
+import com.guitargpt.infrastructure.web.dto.request.CreateGenerationCommand;
+import com.guitargpt.infrastructure.web.dto.request.UpdateGenerationCommand;
 import com.guitargpt.infrastructure.web.dto.response.GenerationRequestResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class GenerationRequestController {
     @PostMapping("/projects/{projectId}/generation-requests")
     public ResponseEntity<GenerationRequestResponse> create(
             @PathVariable UUID projectId,
-            @Valid @RequestBody CreateGenerationRequestRequest request) {
+            @Valid @RequestBody CreateGenerationCommand request) {
         GenerationRequest generationRequest = new GenerationRequest();
         generationRequest.setUserPrompt(request.userPrompt());
         GenerationRequest created = generationRequestUseCase.create(projectId, request.promptTemplateId(), generationRequest);
@@ -58,7 +58,7 @@ public class GenerationRequestController {
     @PutMapping("/generation-requests/{id}")
     public ResponseEntity<GenerationRequestResponse> update(
             @PathVariable UUID id,
-            @Valid @RequestBody UpdateGenerationRequestRequest request) {
+            @Valid @RequestBody UpdateGenerationCommand request) {
         GenerationRequest generationRequest = new GenerationRequest();
         generationRequest.setStatus(request.status());
         generationRequest.setResultText(request.resultText());

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guitargpt.domain.model.GenerationRequest;
 import com.guitargpt.domain.model.GenerationRequestStatus;
 import com.guitargpt.domain.port.in.GenerationRequestUseCase;
-import com.guitargpt.infrastructure.web.dto.request.CreateGenerationRequestRequest;
-import com.guitargpt.infrastructure.web.dto.request.UpdateGenerationRequestRequest;
+import com.guitargpt.infrastructure.web.dto.request.CreateGenerationCommand;
+import com.guitargpt.infrastructure.web.dto.request.UpdateGenerationCommand;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -58,7 +58,7 @@ class GenerationRequestControllerTest {
         mockMvc.perform(post("/api/v1/projects/{projectId}/generation-requests", request.getProjectId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateGenerationRequestRequest(request.getPromptTemplateId(), "Create a blues solo"))))
+                                new CreateGenerationCommand(request.getPromptTemplateId(), "Create a blues solo"))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.userPrompt").value("Create a blues solo"))
                 .andExpect(jsonPath("$.status").value("PENDING"));
@@ -104,7 +104,7 @@ class GenerationRequestControllerTest {
         mockMvc.perform(put("/api/v1/generation-requests/{id}", request.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new UpdateGenerationRequestRequest(GenerationRequestStatus.COMPLETED, "Generated content", null))))
+                                new UpdateGenerationCommand(GenerationRequestStatus.COMPLETED, "Generated content", null))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("COMPLETED"));
     }
@@ -120,7 +120,7 @@ class GenerationRequestControllerTest {
         mockMvc.perform(post("/api/v1/projects/{projectId}/generation-requests", UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                new CreateGenerationRequestRequest(UUID.randomUUID(), ""))))
+                                new CreateGenerationCommand(UUID.randomUUID(), ""))))
                 .andExpect(status().isBadRequest());
     }
 

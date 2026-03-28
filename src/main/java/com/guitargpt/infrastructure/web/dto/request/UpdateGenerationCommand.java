@@ -3,7 +3,7 @@ package com.guitargpt.infrastructure.web.dto.request;
 import com.guitargpt.domain.model.GenerationRequestStatus;
 import jakarta.validation.constraints.NotNull;
 
-public record UpdateGenerationRequestRequest(
+public record UpdateGenerationCommand(
         @NotNull(message = "Status is required")
         GenerationRequestStatus status,
 

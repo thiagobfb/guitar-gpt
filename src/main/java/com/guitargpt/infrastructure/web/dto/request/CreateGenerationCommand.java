@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record CreateGenerationRequestRequest(
+public record CreateGenerationCommand(
         @NotNull(message = "Prompt template ID is required")
         UUID promptTemplateId,
 
