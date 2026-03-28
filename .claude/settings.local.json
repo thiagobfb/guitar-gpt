@@ -6,7 +6,38 @@
       "Bash(mvn clean compile:*)",
       "Bash(mvn verify:*)",
       "Bash(./mvnw clean verify:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(./mvnw clean:*)",
+      "Bash(git checkout:*)",
+      "Bash(javac -version)",
+      "Bash(javac src/main/java/com/guitargpt/infrastructure/messaging/event/GenerationRequestEvent.java)",
+      "Bash($JAVA_HOME/bin/javac -version)",
+      "Read(//opt/jdk/**)",
+      "Bash(export JAVA_HOME=/opt/jdk/jdk-25.0.2)",
+      "Bash(export PATH=$JAVA_HOME/bin:$PATH)",
+      "Bash(./mvnw verify:*)",
+      "Bash(source /home/thiago/activate-java25.sh)",
+      "Bash(./scripts/test-api.sh)",
+      "Bash(VERBOSE=true ./scripts/test-api.sh)",
+      "Bash(chmod +x /mnt/c/dev/guitar-gpt/scripts/test-api-simple.sh)",
+      "Bash(./scripts/test-api-simple.sh)",
+      "Bash(chmod +x /mnt/c/dev/guitar-gpt/scripts/test-endpoints.sh)",
+      "Bash(./scripts/test-endpoints.sh)",
+      "mcp__github__get_file_contents",
+      "mcp__fetch__fetch",
+      "Bash(curl -s https://raw.githubusercontent.com/github/spec-kit/main/README.md)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "mcp__context7__query-docs",
+      "Bash(git reset:*)",
+      "Bash(git rm:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "postgres",
+    "github",
+    "docker",
+    "context7",
+    "fetch"
+  ]
 }

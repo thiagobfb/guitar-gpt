@@ -90,12 +90,14 @@ test_users() {
 
 # Test Project endpoints
 test_projects() {
+    USER_ID=$1
+
     echo ""
     log_info "=== Testing Project Endpoints ==="
 
-    # Create project
+    # Create project (nested under user)
     log_info "Creating project..."
-    PROJECT_RESPONSE=$(curl -s -X POST "$API_URL/projects" \
+    PROJECT_RESPONSE=$(curl -s -X POST "$API_URL/users/$USER_ID/projects" \
         -H "Content-Type: application/json" \
         -d '{
             "name": "Test Project",
@@ -109,9 +111,9 @@ test_projects() {
     PROJECT_ID=$(echo "$PROJECT_RESPONSE" | extract_id)
     log_success "Created project: $PROJECT_ID"
 
-    # Get all projects
-    log_info "Fetching all projects..."
-    curl -s -X GET "$API_URL/projects" | pretty_json
+    # Get all projects for user
+    log_info "Fetching all projects for user..."
+    curl -s -X GET "$API_URL/users/$USER_ID/projects" | pretty_json
     log_success "Projects fetched"
 
     echo "$PROJECT_ID"
@@ -182,19 +184,20 @@ test_prompt_templates() {
 
 # Test Generation Request endpoints
 test_generation_requests() {
-    TEMPLATE_ID=$1
+    PROJECT_ID=$1
+    TEMPLATE_ID=$2
 
     echo ""
     log_info "=== Testing Generation Request Endpoints ==="
 
-    if [ -z "$TEMPLATE_ID" ]; then
-        log_warning "Skipping generation tests (no template ID)"
+    if [ -z "$PROJECT_ID" ] || [ -z "$TEMPLATE_ID" ]; then
+        log_warning "Skipping generation tests (no project or template ID)"
         return
     fi
 
-    # Create generation request
+    # Create generation request (nested under project)
     log_info "Creating generation request..."
-    GEN_RESPONSE=$(curl -s -X POST "$API_URL/generation-requests" \
+    GEN_RESPONSE=$(curl -s -X POST "$API_URL/projects/$PROJECT_ID/generation-requests" \
         -H "Content-Type: application/json" \
         -d "{
             \"promptTemplateId\": \"$TEMPLATE_ID\",
@@ -208,9 +211,9 @@ test_generation_requests() {
     GEN_ID=$(echo "$GEN_RESPONSE" | extract_id)
     log_success "Created generation request: $GEN_ID"
 
-    # Get all requests
-    log_info "Fetching all generation requests..."
-    curl -s -X GET "$API_URL/generation-requests" | pretty_json
+    # Get all requests for project
+    log_info "Fetching all generation requests for project..."
+    curl -s -X GET "$API_URL/projects/$PROJECT_ID/generation-requests" | pretty_json
     log_success "Generation requests fetched"
 }
 
@@ -223,10 +226,10 @@ main() {
     check_server
 
     USER_ID=$(test_users)
-    PROJECT_ID=$(test_projects)
+    PROJECT_ID=$(test_projects "$USER_ID")
     TRACK_ID=$(test_tracks "$PROJECT_ID")
     TEMPLATE_ID=$(test_prompt_templates)
-    test_generation_requests "$TEMPLATE_ID"
+    test_generation_requests "$PROJECT_ID" "$TEMPLATE_ID"
 
     echo ""
     log_success "All tests completed!"
