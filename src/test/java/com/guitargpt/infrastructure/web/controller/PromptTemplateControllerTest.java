@@ -131,4 +131,13 @@ class PromptTemplateControllerTest {
                                 new CreatePromptTemplateRequest("Name", "", null, null))))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void create_shouldReturn400WhenCategoryNull() throws Exception {
+        mockMvc.perform(post("/api/v1/prompt-templates")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CreatePromptTemplateRequest("Name", "Some text", "desc", null))))
+                .andExpect(status().isBadRequest());
+    }
 }

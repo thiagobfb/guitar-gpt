@@ -12,7 +12,8 @@ public record TrackResponse(
         String name,
         TrackType type,
         String description,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public static TrackResponse from(Track track) {
         return new TrackResponse(
@@ -21,7 +22,8 @@ public record TrackResponse(
                 track.getName(),
                 track.getType(),
                 track.getDescription(),
-                track.getCreatedAt()
+                track.getCreatedAt(),
+                track.getUpdatedAt()
         );
     }
 }

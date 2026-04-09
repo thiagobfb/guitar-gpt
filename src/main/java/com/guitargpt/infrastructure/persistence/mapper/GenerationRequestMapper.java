@@ -14,7 +14,7 @@ public class GenerationRequestMapper {
                 entity.getProjectId(),
                 entity.getPromptTemplateId(),
                 entity.getUserPrompt(),
-                GenerationRequestStatus.valueOf(entity.getStatus()),
+                entity.getStatus() != null ? GenerationRequestStatus.valueOf(entity.getStatus()) : null,
                 entity.getResultText(),
                 entity.getErrorMessage(),
                 entity.getCreatedAt(),

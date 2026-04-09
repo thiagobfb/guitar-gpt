@@ -45,6 +45,7 @@ class TrackControllerTest {
                 .type(TrackType.GUITAR)
                 .description("Main guitar")
                 .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 

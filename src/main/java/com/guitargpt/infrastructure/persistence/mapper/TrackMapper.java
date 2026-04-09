@@ -13,9 +13,10 @@ public class TrackMapper {
                 entity.getId(),
                 entity.getProjectId(),
                 entity.getName(),
-                TrackType.valueOf(entity.getType()),
+                entity.getType() != null ? TrackType.valueOf(entity.getType()) : null,
                 entity.getDescription(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                entity.getUpdatedAt()
         );
     }
 
@@ -24,9 +25,10 @@ public class TrackMapper {
         entity.setId(domain.getId());
         entity.setProjectId(domain.getProjectId());
         entity.setName(domain.getName());
-        entity.setType(domain.getType().name());
+        entity.setType(domain.getType() != null ? domain.getType().name() : null);
         entity.setDescription(domain.getDescription());
         entity.setCreatedAt(domain.getCreatedAt());
+        entity.setUpdatedAt(domain.getUpdatedAt());
         return entity;
     }
 }

@@ -22,4 +22,5 @@ public class Track {
     private TrackType type;
     private String description;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

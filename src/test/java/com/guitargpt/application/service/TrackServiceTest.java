@@ -60,6 +60,8 @@ class TrackServiceTest {
         assertThat(result.getProjectId()).isEqualTo(projectId);
         assertThat(result.getName()).isEqualTo("Lead Guitar");
         assertThat(result.getType()).isEqualTo(TrackType.GUITAR);
+        assertThat(result.getCreatedAt()).isNotNull();
+        assertThat(result.getUpdatedAt()).isNotNull();
     }
 
     @Test
@@ -106,6 +108,7 @@ class TrackServiceTest {
 
         assertThat(result.getName()).isEqualTo("Lead Guitar");
         assertThat(result.getType()).isEqualTo(TrackType.GUITAR);
+        assertThat(result.getUpdatedAt()).isNotNull();
     }
 
     @Test

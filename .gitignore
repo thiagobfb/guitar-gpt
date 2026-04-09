@@ -26,6 +26,9 @@ replay_pid*
 .mvn/
 target/
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # MCP configs with API tokens
 .mcp.json
 .codex/config.toml

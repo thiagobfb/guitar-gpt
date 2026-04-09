@@ -31,6 +31,7 @@ public class TrackService implements TrackUseCase {
         track.setId(UUID.randomUUID());
         track.setProjectId(projectId);
         track.setCreatedAt(LocalDateTime.now());
+        track.setUpdatedAt(LocalDateTime.now());
         return trackRepository.save(track);
     }
 
@@ -55,6 +56,7 @@ public class TrackService implements TrackUseCase {
         existing.setName(track.getName());
         existing.setType(track.getType());
         existing.setDescription(track.getDescription());
+        existing.setUpdatedAt(LocalDateTime.now());
         return trackRepository.save(existing);
     }
 

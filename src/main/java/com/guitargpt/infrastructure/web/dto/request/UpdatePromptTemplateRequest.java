@@ -2,6 +2,7 @@ package com.guitargpt.infrastructure.web.dto.request;
 
 import com.guitargpt.domain.model.PromptTemplateCategory;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record UpdatePromptTemplateRequest(
         @NotBlank(message = "Name is required")
@@ -12,6 +13,7 @@ public record UpdatePromptTemplateRequest(
 
         String description,
 
+        @NotNull(message = "Category is required")
         PromptTemplateCategory category
 ) {
 }
