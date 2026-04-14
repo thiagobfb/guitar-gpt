@@ -45,6 +45,25 @@ management:
 server:
   port: 8080
 
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${COGNITO_ISSUER_URI}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: not-used-in-dev
+
 ---
 spring:
   config:
@@ -58,9 +77,3 @@ spring:
 
   kafka:
     bootstrap-servers: redpanda:9092
-
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${COGNITO_ISSUER_URI:https://cognito-idp.us-east-1.amazonaws.com/us-east-1_EZTqnTfn7}
