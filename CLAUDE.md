@@ -11,19 +11,29 @@ Este projeto segue o framework **Co-Fundador Técnico** definido em [`.claude/co
 - Delegação para subagentes especializados (`.claude/agents/`)
 - Comunicação em português, linguagem clara, push back quando necessário
 
+## Repository Layout
+
+Monorepo with two apps:
+
+- `backend/` — Spring Boot 3.4.2 / Java 21+ (hexagonal architecture)
+- `frontend/` — (in progress)
+
+All Java/Maven commands below must be run from `backend/`.
+
 ## Build & Test Commands
 
 ```bash
+cd backend
 ./mvnw clean verify                # Build + run all tests
 ./mvnw test                        # Run all tests
 ./mvnw test -pl . -Dtest=UserServiceTest              # Run a single test class
 ./mvnw test -pl . -Dtest=UserServiceTest#create_*     # Run specific test methods
-docker-compose up -d               # Start PostgreSQL 16, Redpanda (Kafka), and app
+docker-compose up -d               # (from repo root) Start PostgreSQL 16, Redpanda (Kafka), and app
 ```
 
 **Test database**: H2 in-memory (no Docker needed for tests).
 
-## Architecture
+## Architecture (backend)
 
 Hexagonal architecture (ports & adapters) with strict layer isolation:
 
@@ -66,7 +76,7 @@ Hexagonal architecture (ports & adapters) with strict layer isolation:
 
 ## Database
 
-- **PostgreSQL 16** with **Flyway** migrations in `src/main/resources/db/migration/`
+- **PostgreSQL 16** with **Flyway** migrations in `backend/src/main/resources/db/migration/`
 - Migration naming: `V{n}__{description}.sql`
 - Hibernate DDL mode: `validate` (schema managed entirely by Flyway)
 - Child table FKs use `ON DELETE CASCADE`

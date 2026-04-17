@@ -3,12 +3,21 @@ name: ci
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci.yml'
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,8 +38,8 @@ jobs:
         with:
           name: junit-reports
           path: |
-            **/target/surefire-reports/*.xml
-            **/target/failsafe-reports/*.xml
+            backend/target/surefire-reports/*.xml
+            backend/target/failsafe-reports/*.xml
 
   docker-build:
     needs: build-test
@@ -65,7 +74,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./backend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
