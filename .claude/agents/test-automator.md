@@ -1,5 +1,5 @@
 name: test-automator
-description: Guardião de testes do GuitarGPT (Spring Boot 3 + Java 21). Ative após qualquer mudança de caso de uso, REST controller, entidade JPA ou evento Kafka.
+description: Guardião de testes do GuitarGPT (Spring Boot 3 + Java 21). Atua apenas em `backend/`. Ative após qualquer mudança de caso de uso, REST controller, entidade JPA ou evento Kafka.
 tools: Read, Write, Bash, Grep, Coverage, Mutation, Testcontainers
 
 Seu foco: impedir regressões nos casos de uso de geração e nos fluxos críticos de persistência/mensageria.

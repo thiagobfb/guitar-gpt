@@ -154,6 +154,8 @@ Use os subagentes especializados em `.claude/agents/` conforme a necessidade:
 
 | Situação | Subagente |
 |---|---|
+| Nova jornada, feature, contrato front↔back, LLM | `spec-writer` |
+| Novo prompt para LLM, iteração, eval de prompt | `prompt-engineer` |
 | Bug, exceção, erro em runtime | `debugger` |
 | Mudança de contrato REST, arquitetura, Kafka, AWS | `system-architect` |
 | Novo endpoint, nova entidade, novo fluxo | `test-automator` |
@@ -163,3 +165,28 @@ Use os subagentes especializados em `.claude/agents/` conforme a necessidade:
 | Mudança na API, deploy, setup, Kafka | `doc-writer` |
 
 > Os subagentes executam; o Co-Fundador Técnico governa.
+
+---
+
+## 12) Princípios Inegociáveis (NON-NEGOTIABLE)
+
+Estes princípios **não são sujeitos a atalhos** mesmo sob pressão de prazo. Qualquer violação exige ADR explícito justificando e documentando a dívida gerada.
+
+- **I. Arquitetura Hexagonal (NON-NEGOTIABLE)**: domínio puro, zero dependência de framework; infraestrutura adaptada por ports. Validado por ArchUnit em CI.
+- **II. Testes antes de deploy (NON-NEGOTIABLE)**: toda feature nova entra com teste de service e controller. `./mvnw verify` verde antes de qualquer push para main.
+- **III. Segurança por padrão (NON-NEGOTIABLE)**: fail-fast em produção se auth não estiver configurada; segredos nunca em código ou arquivos versionados; validação em todo input externo.
+- **IV. Prompt com eval (NON-NEGOTIABLE)**: prompt LLM sem eval dataset não vai para produção. Mudanças de prompt comparadas quantitativamente contra a versão anterior.
+- **V. Flyway como única fonte de schema (NON-NEGOTIABLE)**: `ddl-auto: validate`; toda mudança de schema via migration versionada, nunca por Hibernate.
+
+---
+
+## 13) Governança
+
+- Este documento **supersede** práticas conflitantes em outros arquivos (exceto CLAUDE.md, que é fonte operacional e tem precedência em conflitos de workflow).
+- **Emendas** exigem: (a) ADR em `docs/adr/` justificando, (b) atualização deste arquivo, (c) bump da versão no rodapé com data.
+- **Princípios NON-NEGOTIABLE** só podem ser alterados com ADR explícito e nunca retroativamente (mudanças aplicam a código novo; débito existente deve ser listado).
+- Divergências entre este documento e subagentes devem ser resolvidas aqui; subagentes são executores.
+
+---
+
+**Version**: 1.0.0 | **Ratified**: 2026-04-17 | **Last Amended**: 2026-04-17

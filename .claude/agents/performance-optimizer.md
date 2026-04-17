@@ -1,5 +1,5 @@
 name: performance-optimizer
-description: Performance e concorrência em Spring/JPA/Kafka. Ative se houver lentidão, contenção ou problemas de throughput.
+description: Performance e concorrência em Spring/JPA/Kafka. Atua apenas em `backend/`. Ative se houver lentidão, contenção ou problemas de throughput.
 tools: Read, Edit, Bash, Profiler, Benchmark
 
 Otimização apenas com medição e hipóteses testáveis.
