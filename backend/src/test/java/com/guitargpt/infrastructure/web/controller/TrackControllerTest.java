@@ -99,4 +99,24 @@ class TrackControllerTest {
         mockMvc.perform(delete("/api/v1/tracks/{id}", UUID.randomUUID()))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    void create_shouldReturn400WhenTypeIsInvalidEnum() throws Exception {
+        String body = "{\"name\":\"Lead\",\"type\":\"NOT_A_VALID_TYPE\",\"description\":\"x\"}";
+        mockMvc.perform(post("/api/v1/projects/{projectId}/tracks", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("type")));
+    }
+
+    @Test
+    void create_shouldReturn400WhenNameExceedsMaxSize() throws Exception {
+        String longName = "a".repeat(300);
+        mockMvc.perform(post("/api/v1/projects/{projectId}/tracks", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CreateTrackRequest(longName, TrackType.GUITAR, "x"))))
+                .andExpect(status().isBadRequest());
+    }
 }

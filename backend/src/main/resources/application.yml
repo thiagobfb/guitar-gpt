@@ -3,9 +3,9 @@ spring:
     name: guitargpt
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/guitargpt
-    username: guitargpt
-    password: guitargpt
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:guitargpt}
+    username: ${DB_USERNAME:guitargpt}
+    password: ${DB_PASSWORD:guitargpt}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -71,9 +71,9 @@ spring:
       on-profile: docker
 
   datasource:
-    url: jdbc:postgresql://db:5432/guitargpt
-    username: guitargpt
-    password: guitargpt
+    url: jdbc:postgresql://${DB_HOST:db}:${DB_PORT:5432}/${DB_NAME:guitargpt}
+    username: ${DB_USERNAME:guitargpt}
+    password: ${DB_PASSWORD:guitargpt}
 
   kafka:
-    bootstrap-servers: redpanda:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:redpanda:9092}
