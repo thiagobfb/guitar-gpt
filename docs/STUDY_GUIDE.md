@@ -741,14 +741,16 @@ backend/src/main/java/com/guitargpt/
 docker-compose up -d
 
 # Ou só os tests (rápido, usa H2 em memória)
-cd backend && ./mvnw test
+cd backend && mvn test
 
 # Build completo
-cd backend && ./mvnw clean verify
+cd backend && mvn clean verify
 
 # Acessar Swagger UI
 open http://localhost:8080/swagger-ui.html
 ```
+
+> **WSL**: `./mvnw` falha por CRLF nos line endings. Use o Maven do sistema (`mvn`) ou adicione o caminho explícito, ex: `/mnt/c/dev/apache-maven-3.9.12/bin/mvn`.
 
 Para demo em entrevista:
 1. Mostrar `ArchitectureTest.java` rodando — "minha arquitetura é testável".
