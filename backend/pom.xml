@@ -71,6 +71,13 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
+        <!-- AI / LLM -->
+        <dependency>
+            <groupId>com.anthropic</groupId>
+            <artifactId>anthropic-java</artifactId>
+            <version>2.18.0</version>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

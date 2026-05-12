@@ -33,6 +33,12 @@ spring:
       properties:
         spring.json.trusted.packages: com.guitargpt.*
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${COGNITO_ISSUER_URI}
+
 management:
   endpoints:
     web:
@@ -45,12 +51,10 @@ management:
 server:
   port: 8080
 
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${COGNITO_ISSUER_URI}
+anthropic:
+  api-key: ${ANTHROPIC_API_KEY}
+  model: ${ANTHROPIC_MODEL:claude-opus-4-7}
+  max-tokens: ${ANTHROPIC_MAX_TOKENS:8000}
 
 ---
 spring:
@@ -63,6 +67,9 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: not-used-in-dev
+
+anthropic:
+  api-key: ${ANTHROPIC_API_KEY:not-used-in-dev}
 
 ---
 spring:

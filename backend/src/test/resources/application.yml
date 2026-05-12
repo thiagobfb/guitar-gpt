@@ -24,3 +24,8 @@ spring:
 
   kafka:
     bootstrap-servers: ${spring.embedded.kafka.brokers:localhost:9092}
+
+anthropic:
+  api-key: test-api-key
+  model: claude-opus-4-7
+  max-tokens: 8000

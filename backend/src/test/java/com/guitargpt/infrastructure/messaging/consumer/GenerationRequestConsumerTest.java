@@ -3,6 +3,7 @@ package com.guitargpt.infrastructure.messaging.consumer;
 import com.guitargpt.domain.model.GenerationRequest;
 import com.guitargpt.domain.model.GenerationRequestStatus;
 import com.guitargpt.domain.port.in.GenerationRequestUseCase;
+import com.guitargpt.domain.port.out.TablatureGenerator;
 import com.guitargpt.infrastructure.messaging.event.GenerationRequestEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GenerationRequestConsumerTest {
 
+    private static final String GENERATED_TAB = "e|---0---1---0---|\nB|---1---1---1---|";
+
     @Mock
     private GenerationRequestUseCase generationRequestUseCase;
+
+    @Mock
+    private TablatureGenerator tablatureGenerator;
 
     @InjectMocks
     private GenerationRequestConsumer consumer;
@@ -53,18 +59,20 @@ class GenerationRequestConsumerTest {
                 .build();
         when(generationRequestUseCase.findById(requestId)).thenReturn(pendingRequest);
         when(generationRequestUseCase.update(eq(requestId), any())).thenAnswer(inv -> inv.getArgument(1));
+        when(tablatureGenerator.generate(event.userPrompt())).thenReturn(GENERATED_TAB);
 
         consumer.consume(event);
 
         ArgumentCaptor<GenerationRequest> captor = ArgumentCaptor.forClass(GenerationRequest.class);
         verify(generationRequestUseCase, times(2)).update(eq(requestId), captor.capture());
+        verify(tablatureGenerator).generate(event.userPrompt());
 
         GenerationRequest processingUpdate = captor.getAllValues().get(0);
         assertThat(processingUpdate.getStatus()).isEqualTo(GenerationRequestStatus.PROCESSING);
 
         GenerationRequest completedUpdate = captor.getAllValues().get(1);
         assertThat(completedUpdate.getStatus()).isEqualTo(GenerationRequestStatus.COMPLETED);
-        assertThat(completedUpdate.getResultText()).contains("blues solo in A minor");
+        assertThat(completedUpdate.getResultText()).isEqualTo(GENERATED_TAB);
     }
 
     @Test
@@ -78,27 +86,27 @@ class GenerationRequestConsumerTest {
         consumer.consume(event);
 
         verify(generationRequestUseCase, never()).update(any(), any());
+        verify(tablatureGenerator, never()).generate(any());
     }
 
     @Test
-    void consume_shouldSetFailedOnException() {
+    void consume_shouldSetFailedOnGeneratorException() {
         GenerationRequest pendingRequest = GenerationRequest.builder()
                 .id(requestId)
                 .status(GenerationRequestStatus.PENDING)
                 .build();
         when(generationRequestUseCase.findById(requestId)).thenReturn(pendingRequest);
-        when(generationRequestUseCase.update(eq(requestId), any()))
-                .thenAnswer(inv -> inv.getArgument(1))
-                .thenThrow(new RuntimeException("Database error"))
-                .thenAnswer(inv -> inv.getArgument(1));
+        when(generationRequestUseCase.update(eq(requestId), any())).thenAnswer(inv -> inv.getArgument(1));
+        when(tablatureGenerator.generate(event.userPrompt()))
+                .thenThrow(new RuntimeException("Anthropic API unavailable"));
 
         consumer.consume(event);
 
         ArgumentCaptor<GenerationRequest> captor = ArgumentCaptor.forClass(GenerationRequest.class);
-        verify(generationRequestUseCase, times(3)).update(eq(requestId), captor.capture());
+        verify(generationRequestUseCase, times(2)).update(eq(requestId), captor.capture());
 
-        GenerationRequest failedUpdate = captor.getAllValues().get(2);
+        GenerationRequest failedUpdate = captor.getAllValues().get(1);
         assertThat(failedUpdate.getStatus()).isEqualTo(GenerationRequestStatus.FAILED);
-        assertThat(failedUpdate.getErrorMessage()).contains("Database error");
+        assertThat(failedUpdate.getErrorMessage()).contains("Anthropic API unavailable");
     }
 }

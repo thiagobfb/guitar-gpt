@@ -34,3 +34,11 @@ target/
 .codex/config.toml
 .gemini/settings.json
 .vscode/mcp.json
+
+# Local secrets (.env files must never be committed)
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
